@@ -79,6 +79,18 @@ public class COMP232ArrayHeap<K extends Comparable<K>, V> implements COMP232Prio
         return leftChildIndex >= tree.size() && rightChildIndex >= tree.size();
     }
 
+    public void percolateUp(int index){
+        int parentIndex = getParentIndex(index);
+        // HeapNode<K,V> perculatedNode = tree.get(index);
+        // HeapNode<K,V> parent = tree.get(index);
+        while (index > 0 && tree.get(index).key.compareTo(tree.get(parentIndex).key) > 0) {
+            swap(parentIndex, index);
+            index = parentIndex;
+            parentIndex = getParentIndex(index);
+            // parent = tree.get(parentIndex);
+        }
+    }
+
     public void add(K key, V value) {
         /*
          * Place the node at the end of the heap, i.e. the first empty spot in 
@@ -91,7 +103,8 @@ public class COMP232ArrayHeap<K extends Comparable<K>, V> implements COMP232Prio
          * node up the tree.
 	 * I recommend creating a helper function to assist with the percolation.
          */
-        throw new UnsupportedOperationException("Not yet implemented");
+        tree.add(new HeapNode<>(key, value));
+        percolateUp(tree.size()-1);
     }
 
     /**
@@ -205,17 +218,28 @@ public class COMP232ArrayHeap<K extends Comparable<K>, V> implements COMP232Prio
      *          Thrown if the heap is empty
      */
     public void adjustPriority(V value, K newKey) {
-        // Intentionally not implemented -- see homework assignment
-        throw new UnsupportedOperationException("Not yet implemented.");
-
-        /*
-         * Find the node with the value -- Hint: Just search through the array!
-         * Replace its key and then move the node to a valid location within the
-         * tree. Hint: If you factor out your percolate functionality from the 
-         * add method in a way similar to how the trickleDown method was factored 
-         * out of remove, then you can use those two methods to move the node to
-         * a proper location.
-         */
+        if (tree.size() == 0) {
+            throw new IllegalStateException(
+            "Cannot change priority in an empty tree");
+        } 
+        else {
+        int foundIndex = -1;
+        HeapNode<K,V> foundNode = null;
+        int i = 0;
+        while (i < tree.size() && foundNode == null) {
+            HeapNode<K,V> cur = tree.get(i);
+            if (cur.value.equals(value)) {
+                foundIndex = i;
+                foundNode = cur;
+            }
+                i++;
+            }
+            if (foundNode != null) {
+                foundNode.key = newKey;
+                trickleDown(foundIndex);
+                percolateUp(foundIndex);
+            }
+        }
     }
 
     /**
