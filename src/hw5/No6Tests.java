@@ -41,7 +41,6 @@ public class No6Tests {
 		assertEquals("Incorrect size", 2, heap.size());
 		assertEquals("Top of heap is not correct", "B", heap.remove());
 		assertTrue("Heap property was not preserved by add", heap.checkHeapProperty());
-		
 		assertEquals("Top of heap not correct after remove", "A", heap.peek());
 	}
 	

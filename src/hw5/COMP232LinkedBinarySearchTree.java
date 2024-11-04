@@ -1,5 +1,8 @@
 package hw5;
 
+import com.sun.jdi.ByteType;
+import java.util.NoSuchElementException;
+
 /**
  * Linked implementation of a binary search tree. The binary search tree
  * inherits the methods from the binary tree. The add and remove methods must
@@ -100,16 +103,45 @@ public class COMP232LinkedBinarySearchTree<K extends Comparable<K>, V> extends C
 	 * {@inheritDoc}
 	 */
 	public V get(K key) {
-		// Intentionally not implemented - see homework assignment.
-		throw new UnsupportedOperationException("Not yet implemented");
+		return  getFriend(root, key);
+
+	}
+
+	public V getFriend(BTNode<K,V> subTreeRoot, K key){
+		if(subTreeRoot == null){
+			return null;
+		}
+		else if(key.equals(subTreeRoot.key)){
+			return subTreeRoot.value;
+		}
+		else if(key.compareTo(subTreeRoot.key)<0){
+			return getFriend(subTreeRoot.left, key);
+		}
+		else{
+			return getFriend(subTreeRoot.right, key);
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void set(K key, V value) {
-		// Intentionally not implemented - see homework assignment.
-		throw new UnsupportedOperationException("Not yet implemented");
+		setFriend(root, key, value);
+	}
+
+	public void setFriend(BTNode<K,V> subTreeRoot, K key, V value){
+		if(subTreeRoot == null){
+			throw new NoSuchElementException("Where is the key????");
+		}
+		else if(key.equals(subTreeRoot.key)){
+			subTreeRoot.value= value;
+		}
+		else if(key.compareTo(subTreeRoot.key)< 0){
+			setFriend(subTreeRoot.left, key, value);
+		}
+		else{
+			setFriend(subTreeRoot.right, key, value);
+		}
 	}
 
 	/**
@@ -169,9 +201,88 @@ public class COMP232LinkedBinarySearchTree<K extends Comparable<K>, V> extends C
 	/**
 	 * {@inheritDoc}
 	 */
+		/**
+ * Removes the node with the specified key from the BST, if it exists.
+ *
+ * @param key the key of the node to be removed
+ * @return the value associated with the removed node, or null if the key was not found
+ */
 	public V remove(K key) {
-		// Intentionally not implemented - see homework assignment.
-		throw new UnsupportedOperationException("Not yet implemented");
+    	BTNode<K, V> nodeToRemove = findNode(root, key);
+    	if (nodeToRemove == null) {
+       		return null;
+    	}
+    	V removedValue = nodeToRemove.value;
+    	if (nodeToRemove.left == null && nodeToRemove.right == null) {     
+        	removeLeafNode(nodeToRemove);
+    	} 
+		else if (nodeToRemove.left != null && nodeToRemove.right == null) {
+        	replaceNodeWithChild(nodeToRemove, nodeToRemove.left);
+    	} 
+		else if (nodeToRemove.left == null && nodeToRemove.right != null) {
+        	replaceNodeWithChild(nodeToRemove, nodeToRemove.right);
+    	} 
+		else {
+        	BTNode<K, V> successor = findMin(nodeToRemove.right);
+        	nodeToRemove.key = successor.key;
+        	nodeToRemove.value = successor.value;
+        	if (successor.right != null) {
+            	replaceNodeWithChild(successor, successor.right);
+        	} else {
+           		removeLeafNode(successor);
+        	}
+   		}
+   		size--;
+    	return removedValue;
+	}
+
+	private BTNode<K, V> findNode(BTNode<K, V> subTreeRoot, K key) {
+    	if (subTreeRoot == null) {
+        	return null;
+    	} 
+		else if (key.compareTo(subTreeRoot.key) < 0) {
+        	return findNode(subTreeRoot.left, key);
+    	} 
+		else if (key.compareTo(subTreeRoot.key) > 0) {
+        	return findNode(subTreeRoot.right, key);
+    	} 
+		else {
+        	return subTreeRoot;
+		}
+	}
+
+	private void removeLeafNode(BTNode<K, V> node) {
+    	if (node.parent == null) {
+        	root = null;
+    	} 
+		else if (node.parent.left == node) {
+       		node.parent.left = null;
+    	} 
+		else {
+        	node.parent.right = null;
+   		}
+    	node.parent = null;
+	}
+
+	private void replaceNodeWithChild(BTNode<K, V> node, BTNode<K, V> child) {
+    	if (node.parent == null) {
+        	root = child;
+    	} 
+		else if (node.parent.left == node) {
+        	node.parent.left = child;
+    	} 	
+		else {
+        	node.parent.right = child;
+		}
+    	child.parent = node.parent;
+    	node.parent = null;
+	}
+
+	private BTNode<K, V> findMin(BTNode<K, V> subTreeRoot) {
+    	while (subTreeRoot.left != null) {
+        	subTreeRoot = subTreeRoot.left;
+    	}
+    	return subTreeRoot;
 	}
 
 	/*
