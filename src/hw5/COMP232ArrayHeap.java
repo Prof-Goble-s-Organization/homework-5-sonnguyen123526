@@ -81,13 +81,10 @@ public class COMP232ArrayHeap<K extends Comparable<K>, V> implements COMP232Prio
 
     public void percolateUp(int index){
         int parentIndex = getParentIndex(index);
-        // HeapNode<K,V> perculatedNode = tree.get(index);
-        // HeapNode<K,V> parent = tree.get(index);
         while (index > 0 && tree.get(index).key.compareTo(tree.get(parentIndex).key) > 0) {
             swap(parentIndex, index);
             index = parentIndex;
             parentIndex = getParentIndex(index);
-            // parent = tree.get(parentIndex);
         }
     }
 
@@ -197,7 +194,7 @@ public class COMP232ArrayHeap<K extends Comparable<K>, V> implements COMP232Prio
             HeapNode<K, V> leftChild = tree.get(leftChildIndex);
             HeapNode<K, V> rightchild = tree.get(rightChildIndex);
 
-            if (leftChild.key.compareTo(rightchild.key) > 1) {
+            if (leftChild.key.compareTo(rightchild.key) > 0) {
                 return leftChildIndex;      // left child has a larger key
             } else {
                 return rightChildIndex;     // right child is larger
@@ -227,10 +224,10 @@ public class COMP232ArrayHeap<K extends Comparable<K>, V> implements COMP232Prio
         HeapNode<K,V> foundNode = null;
         int i = 0;
         while (i < tree.size() && foundNode == null) {
-            HeapNode<K,V> cur = tree.get(i);
+            HeapNode<K,V> current = tree.get(i);
             if (cur.value.equals(value)) {
                 foundIndex = i;
-                foundNode = cur;
+                foundNode = current;
             }
                 i++;
             }
@@ -272,7 +269,7 @@ public class COMP232ArrayHeap<K extends Comparable<K>, V> implements COMP232Prio
 
     private boolean checkHeapPropertyHelper(int nodeIndex) {
         // traverse the heap, checking the heap property at each node
-        if (nodeIndex > tree.size()) {
+        if (nodeIndex >= tree.size()) {
             return true;    // off tree
         } else {
             // Note: Works on root because (0 - 1) / 2 = 0
