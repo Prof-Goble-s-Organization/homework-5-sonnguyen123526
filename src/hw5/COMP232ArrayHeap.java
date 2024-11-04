@@ -225,7 +225,7 @@ public class COMP232ArrayHeap<K extends Comparable<K>, V> implements COMP232Prio
         int i = 0;
         while (i < tree.size() && foundNode == null) {
             HeapNode<K,V> current = tree.get(i);
-            if (cur.value.equals(value)) {
+            if (current.value.equals(value)) {
                 foundIndex = i;
                 foundNode = current;
             }
